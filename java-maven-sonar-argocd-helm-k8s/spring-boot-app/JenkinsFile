@@ -7,6 +7,8 @@ pipeline {
         sh 'echo Cleaning up workspace...'
         // Command to clean up workspace
         sh 'rm -rf *'
+        sh 'git clean -fdx'
+
       }
     }
     stage('Checkout') {
