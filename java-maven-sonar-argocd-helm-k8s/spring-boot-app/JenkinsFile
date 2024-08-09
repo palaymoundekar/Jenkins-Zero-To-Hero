@@ -51,7 +51,7 @@ pipeline {
         }
       }
     }
-     stage('Update Deployment File') {
+    stage('Update Deployment File') {
         environment {
             GIT_REPO_NAME = "ultimate_pipeline"
             GIT_USER_NAME = "palaymoundekar"
@@ -70,7 +70,32 @@ pipeline {
             }
         }
     }
-    
+
+    stage('Update Deployment File') {
+    environment {
+        GIT_REPO_NAME = "ultimate_pipeline"
+        GIT_USER_NAME = "palaymoundekar"
+        GIT_USER_EMAIL = "moundekarpalay@gmail.com"
+    }
+    steps {
+        withCredentials([string(credentialsId: 'GITHUB_TOKEN', variable: 'GITHUB_TOKEN')]) {
+            script {
+                def buildNumber = env.BUILD_NUMBER
+                def repoUrl = "https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git"
+                
+                sh """
+                    git config user.email '${GIT_USER_EMAIL}'
+                    git config user.name '${GIT_USER_NAME}'
+                    sed -i 's/replaceImageTag/${buildNumber}/g' ultimate_pipeline/spring-boot-app-manifests/deployment.yml
+                    git add ultimate_pipeline/spring-boot-app-manifests/deployment.yml
+                    git commit -m 'Update deployment image to version ${buildNumber}'
+                    git push ${repoUrl} HEAD:main
+                """
+            }
+        }
+    }
+  }
+
   
  }
 }
