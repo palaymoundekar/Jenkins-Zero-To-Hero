@@ -1,5 +1,6 @@
 pipeline {
   agent any
+  
   stages {
     stage('Cleanup') {
       steps {
@@ -10,8 +11,8 @@ pipeline {
     }
     stage('Checkout') {
       steps {
-        sh 'echo passed'
-        git branch: 'main', url: 'https://github.com/palaymoundekar/ultimate_pipeline.git'
+        withCredentials([string(credentialsId: 'GITHUB_TOKEN', variable: 'GITHUB_TOKEN')]) {
+          sh 'git clone https://palaymoundekar:${GITHUB_TOKEN}@github.com/palaymoundekar/ultimate_pipeline.git'
       }
     }
     stage('Build and Test') {
